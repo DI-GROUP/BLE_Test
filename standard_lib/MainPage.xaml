@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:BLETest"
+             x:Class="BLETest.MainPage"
+             x:Name="thePage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:BoolInversionConverter x:Key="BoolInversionConverter" />
+            <local:GuidToStringConverter x:Key="GuidToStringConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.BindingContext>
+        <local:MainPageViewModel />
+    </ContentPage.BindingContext>
+    <ContentPage.Content>
+        <Grid>
+            <Label Text="Turn blutooth on."
+                   IsVisible="{Binding IsBTOn, Converter={StaticResource BoolInversionConverter}}" Margin="0,20,0,0"
+                   HorizontalOptions="Center" />
+            <StackLayout IsVisible="{Binding IsBTOn}">
+                <Button Text="Update" Command="{Binding StartScanCommand}" HorizontalOptions="Fill" />
+                <local:RepeaterView ItemsSource="{Binding Devices}" Margin="0,10,0,0">
+                    <local:RepeaterView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <BoxView Color="AliceBlue" HorizontalOptions="Fill" VerticalOptions="Fill"
+                                         InputTransparent="True">
+                                    <BoxView.Triggers>
+                                        <DataTrigger Binding="{Binding IsTestSuccessful}" Value="true"
+                                                     TargetType="BoxView">
+                                            <Setter Property="Color" Value="#FF7FFFD4" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsTesting}" Value="true"
+                                                     TargetType="BoxView">
+                                            <Setter Property="Color" Value="#808080" />
+                                        </DataTrigger>
+                                    </BoxView.Triggers>
+                                </BoxView>
+                                <Grid Margin="20,5,5,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackLayout  Grid.Column="0" Orientation="Vertical">
+                                    <Label Text="{Binding Name}" 
+                                           InputTransparent="True" />
+                                    <Label Text="{Binding ID, Converter={StaticResource GuidToStringConverter}}" 
+                                           InputTransparent="True" />
+                                    </StackLayout>
+                                    <Button Grid.Column="1" WidthRequest="50" Text="DC"  Command="{Binding DisconnectCommand}"></Button>
+                                </Grid>
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding StartTestCommand}" />
+                                </Grid.GestureRecognizers>
+                            </Grid>
+                        </DataTemplate>
+                    </local:RepeaterView.ItemTemplate>
+                </local:RepeaterView>
+            </StackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>
